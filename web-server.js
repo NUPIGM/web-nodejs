@@ -113,8 +113,8 @@ http.createServer((req, res) => {
 
                     if (jsonPostData["user"] == "user" && jsonPostData["pwd"] == "pwd") {
 
-                        // res.statusCode = 302;
-                        // res.setHeader("Location", "/debug")
+                        res.statusCode = 200;
+                        // res.setHeader("Location", "/")
                         res.setHeader("Set-Cookie", [`token=${token};httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`, `userId=${userId};httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`]);
                         res.end('{"return":"1"}')
 
@@ -128,8 +128,8 @@ http.createServer((req, res) => {
                     }
                     */
                     else {
-                        res.statusCode = 200;
-                        // res.setHeader("Location", "/")
+                        res.statusCode = 302;
+                        res.setHeader("Location", "/")
                         res.setHeader("Content-Type", "application/json")
                         res.end('{"return":"0"}');
 
