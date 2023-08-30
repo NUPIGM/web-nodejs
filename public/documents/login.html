@@ -6,36 +6,38 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>login</title>
 </head>
+<script>
+
+	document.getElementById('myForm').addEventListener('submit', (event)=> {
+		event.preventDefault();
+		let user = document.getElementById("user").value
+		let password = document.getElementById("password").value
+		fetch("/login", {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				user: user,
+				pwd: password
+			})
+		}).then((response) => {
+			// handle the response
+			console.log("向/login发起了请求，请求体：",response);
+			document.getElementById('output').textContent = response;
+		});
+	});
+</script>
 
 <body>
-	<a href="/documents/index.html">主页</a>
-	<form  id="myForm">
+	<a href="./index.html">主页</a>
+	<form id="myForm">
 		Username: <input type="text" id="user" name="user"><br>
 		Password: <input type="password" id="password" name="password">
 		<input type="submit" value="Submit">
 	</form>
 	<div id="output"></div>
-	<script>
-		document.getElementById('myForm').addEventListener('submit', function (event) {
-			event.preventDefault();
-			let user=document.getElementById("user").value
-			let password=document.getElementById("password").value
-			fetch("/login", {
-				method: 'POST',
-				headers: {
-    'Content-Type': 'application/json'
-  },
-				body: JSON.stringify({
-					user:user,
-					pwd:password
-				})
-			}).then(response => response.text()).then((response) => {
-				// handle the response
-				console.log(response);
-				document.getElementById('output').textContent = response;
-			});
-		});
-	</script>
+
 </body>
 
 </html>
