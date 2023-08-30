@@ -71,14 +71,14 @@ http.createServer((req, res) => {
                     readStream.on("data", (chunk) => { })
                     readStream.on("error", (err) => {
                         console.log("/public 路径请求:", err);
-                        // res.statusCode = 404;
+                        res.statusCode = 405;
                         // res.setHeader("Content-type", "application/json")
-                        res.end();
+                        res.end("请求不被允许，返回可用的请求方法");
                     })
                     readStream.pipe(res)
 
                     readStream.on("end", () => {
-                        console.log("public is finish");
+                        console.log("访问了文件",  filePath);
                     })
                     /*
                         fs.readFile(filePath, (err, data) => {
