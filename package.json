@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "nodemon web-server.js"
+  },
+  "name": "app",
+  "version": "1.0.0",
+  "main": "web-server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "https://www.youtube.com/watch?v=CsrfzkNgvyA&list=PL9nxfq1tlKKlhV1UzUmElRkxmjkoO3mtH&index=8\r #### nodemon 监测文件变化"
+}

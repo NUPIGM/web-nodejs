@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>login</title>
+</head>
+
+<body>
+	<form  id="myForm">
+		Username: <input type="text" id="user" name="user"><br>
+		Password: <input type="password" id="password" name="password">
+		<input type="submit" value="Submit">
+	</form>
+	<div id="output"></div>
+	<script>
+		document.getElementById('myForm').addEventListener('submit', function (event) {
+			event.preventDefault();
+			let user=document.getElementById("user").value
+			let password=document.getElementById("password").value
+			fetch("/login", {
+				method: 'POST',
+				headers: {
+    'Content-Type': 'application/json'
+  },
+				body: JSON.stringify({
+					user:user,
+					pwd:password
+				})
+			}).then(response => response.text()).then((response) => {
+				// handle the response
+				console.log(response);
+				document.getElementById('output').textContent = response;
+			});
+		});
+	</script>
+</body>
+
+</html>
