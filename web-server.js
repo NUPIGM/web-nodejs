@@ -49,17 +49,17 @@ http.createServer((req, res) => {
                     res.end();
 
                     break;
-                case "/log":
+                case "/hello":
                     // console.log('err');
                     // let a = JSON.stringify(getCookie);
                     // let b = JSON.stringify(reqUrl);
                     // res.setHeader("Content-Type","application/json")
-                    res.end();
+                    res.end("hello");
                     break;
                 case "/debug":
                     console.log("reqUrl:", reqUrl)
                     console.log("getCookie:", getCookie)
-                    console.log("")
+                    console.log("visiter address:",req.socket.remoteAddress)
                     console.log()
                     console.log()
                     res.end()
@@ -73,26 +73,14 @@ http.createServer((req, res) => {
                         console.log("/public 路径请求:", err);
                         res.statusCode = 405;
                         // res.setHeader("Content-type", "application/json")
-                        res.end("请求不被允许，返回可用的请求方法");
+                        res.end("Method Not Allowed");
                     })
                     readStream.pipe(res)
 
                     readStream.on("end", () => {
-                        console.log("访问了文件",  filePath);
+                        console.log("have user visit file,path:", filePath);
                     })
-                    /*
-                        fs.readFile(filePath, (err, data) => {
-                            if (err) {
-                                res.statusCode = 404;
-                                res.setHeader("Content-type", "application/json")
-                                res.end('{"msg":"null"}');
-                                return;
-                            }
-                            // 返回读取到的文件内容
-                            res.statusCode = 200;
-                            res.end(data);
-                        });
-                    */
+
                     break;
             }
             break;
@@ -100,10 +88,6 @@ http.createServer((req, res) => {
 
             if (reqUrl.pathname === "/login") {
 
-                let postData = "";
-                req.on("data", chunk => {
-                    postData += chunk;
-                });
                 // req.pipe(res)
 
                 let day = new Date();
@@ -112,17 +96,20 @@ http.createServer((req, res) => {
 
 
 
+                let postData = "";
+                req.on("data", chunk => {
+                    postData += chunk;
+                });
+                req.on("error", (err) => { console.log("login API request error:", err); })
                 req.on("end", () => {
 
                     let jsonPostData = JSON.parse(postData)
-                    console.log(jsonPostData["user"], jsonPostData["pwd"])
+                    // console.log(jsonPostData["user"], jsonPostData["pwd"])
                     // 验证用户的登录信息...
                     // 如果验证成功，生成一个加密的 cookie
                     const userId = jsonPostData["user"];  // 用户的 ID
                     const secret = jsonPostData["pwd"];  // 你的密钥
-                    let token = crypto.createHmac('sha256', secret)
-                        .update(userId)
-                        .digest('hex');
+                    let token = crypto.createHmac('sha256', secret).update(userId).digest('hex');
 
                     if (jsonPostData["user"] == "user" && jsonPostData["pwd"] == "pwd") {
 
@@ -147,6 +134,7 @@ http.createServer((req, res) => {
                         res.end('{"return":"0"}');
 
                     }
+                    console.log(`login request data => user = \<${jsonPostData["user"]}\> , password = \<${jsonPostData["pwd"]}\>`);
                 })
 
 

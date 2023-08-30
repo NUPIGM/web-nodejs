@@ -6,9 +6,21 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>login</title>
 </head>
+
+<body>
+	<a href="./index.html">主页</a>
+	<form id="myForm">
+		Username: <input type="text" id="user" name="user"><br>
+		Password: <input type="password" id="password" name="password">
+		<input type="submit" value="Submit">
+	</form>
+	<div id="output"></div>
+
+</body>
+
 <script>
 
-	document.getElementById('myForm').addEventListener('submit', (event)=> {
+	document.getElementById('myForm').addEventListener('submit', (event) => {
 		event.preventDefault();
 		let user = document.getElementById("user").value
 		let password = document.getElementById("password").value
@@ -23,21 +35,10 @@
 			})
 		}).then((response) => {
 			// handle the response
-			console.log("向/login发起了请求，请求体：",response);
+			console.log("向/login发起了请求，请求体：", response);
 			document.getElementById('output').textContent = response;
 		});
 	});
 </script>
-
-<body>
-	<a href="./index.html">主页</a>
-	<form id="myForm">
-		Username: <input type="text" id="user" name="user"><br>
-		Password: <input type="password" id="password" name="password">
-		<input type="submit" value="Submit">
-	</form>
-	<div id="output"></div>
-
-</body>
 
 </html>
