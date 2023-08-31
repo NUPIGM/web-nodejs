@@ -16,10 +16,22 @@
 	</form>
 	<div id="output"></div>
 
+	<div>
+		<input type="button" onclick="getFet()" id="get" value="get">
+	</div>
+
 </body>
 
 <script>
-
+	function getFet() {
+		fetch("/debug?a=1")
+			.then(res => res.text())
+			.then(data => {
+				console.log(data);
+				document.getElementById("output").textContent=data;
+			})
+			.catch(error => console.error('Error:', error));
+	}
 	document.getElementById('myForm').addEventListener('submit', (event) => {
 		event.preventDefault();
 		let user = document.getElementById("user").value
@@ -33,11 +45,18 @@
 				user: user,
 				pwd: password
 			})
-		}).then((response) => {
+		}).then(res=>res.text()).then((response) => {
 			// handle the response
-			console.log("向/login发起了请求，请求体：", response);
-			document.getElementById('output').textContent = response;
-		});
+			let outputElement = document.getElementById('output');
+			outputElement.textContent=response;
+			// if (outputElement) {
+			// 	outputElement.textContent = typeof response === 'object' ? JSON.stringify(response) : response;
+			// console.log(response);
+
+			// } else {
+			// 	console.log("没有找到 id 为 'output' 的元素");
+			// }
+		}).catch(e => console.log('There was a problem with your fetch operation: ' + e.message));;
 	});
 </script>
 

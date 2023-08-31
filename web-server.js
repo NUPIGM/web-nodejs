@@ -13,13 +13,16 @@ http.createServer((req, res) => {
     //获取req的cookie
     const cookie = req.headers.cookie || "";
     let getCookie = parseCookie(cookie);
-
+    // 先判断请求的方法，决定处理过程
+    // GET || POST
     switch (req.method) {
         case "GET":
             // res.setHeader("Content-type", "text/html");
             // res.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
             // res.end("<a'>hello world</a>");
             // console.log("get");
+
+            // 请求API，不同路径执行不同内容
             switch (reqUrl.pathname) {
                 case "/":
                     res.statusCode = 301;
@@ -56,13 +59,15 @@ http.createServer((req, res) => {
                     // res.setHeader("Content-Type","application/json")
                     res.end("hello");
                     break;
+                // 测试请求，主要返回变量的值
                 case "/debug":
+                    console.log("req.url:", req.url)
                     console.log("reqUrl:", reqUrl)
                     console.log("getCookie:", getCookie)
-                    console.log("visiter address:",req.socket.remoteAddress)
+                    console.log("visiter address:", req.socket.remoteAddress)
+                    console.log("searchParams", reqUrl.searchParams)
                     console.log()
-                    console.log()
-                    res.end()
+                    res.end("1")
                     break;
                 default:
                     // 使用 path 模块处理请求路径，确保只能访问 public 文件夹下的内容
@@ -116,7 +121,7 @@ http.createServer((req, res) => {
                         res.statusCode = 200;
                         // res.setHeader("Location", "/")
                         res.setHeader("Set-Cookie", [`token=${token};httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`, `userId=${userId};httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`]);
-                        res.end('{"return":"1"}')
+                        res.end('"{"return":"1"}"')
 
                     }
                     /*
@@ -131,7 +136,7 @@ http.createServer((req, res) => {
                         res.statusCode = 302;
                         res.setHeader("Location", "/")
                         res.setHeader("Content-Type", "application/json")
-                        res.end('{"return":"0"}');
+                        res.end('"{"return":"0"}"');
 
                     }
                     console.log(`login request data => user = \<${jsonPostData["user"]}\> , password = \<${jsonPostData["pwd"]}\>`);
