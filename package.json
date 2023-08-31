@@ -6,8 +6,11 @@
   "name": "app",
   "version": "1.0.0",
   "main": "web-server.js",
+"exports":{
+    "import":"./content.js"
+},
   "keywords": [],
-  "author": "",
+  "author": "Riizhu",
   "license": "ISC",
-  "description": "https://www.youtube.com/watch?v=CsrfzkNgvyA&list=PL9nxfq1tlKKlhV1UzUmElRkxmjkoO3mtH&index=8\r #### nodemon 监测文件变化"
+  "description": "https://www.youtube.com/watch?v=CsrfzkNgvyA&list=PL9nxfq1tlKKlhV1UzUmElRkxmjkoO3mtH&index=8\r #### 教程地址"
 }
