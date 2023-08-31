@@ -1,5 +1,5 @@
 function blog() {
-    
+    console.log("hello");
 }
 function movie() {
     
