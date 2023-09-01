@@ -9,7 +9,7 @@ import { error, log } from "node:console";
 
 http.createServer((req, res) => {
     //url解析,返回一个对象(有路径、参数、地址等)。
-    const reqUrl = new URL(req.url, `http://${req.headers.host}:80`);
+    const reqUrl = new URL(req.url, `http://${req.headers.host}`);
     //获取req的cookie
     const cookie = req.headers.cookie || "";
     let getCookie = parseCookie(cookie);
@@ -27,6 +27,7 @@ http.createServer((req, res) => {
                 case "/":
                     res.statusCode = 301;
                     res.setHeader("Location", "/documents/index.html")
+                    res.setHeader("Content-Type","text/html")
                     res.end();
                     break;
                 case "/blog/content":
@@ -83,6 +84,9 @@ http.createServer((req, res) => {
                     readStream.pipe(res)
 
                     readStream.on("end", () => {
+                        
+                    // res.setHeader("Content-Type","text/html")
+                        
                         console.log("have user visit file,path:", filePath);
                     })
 
@@ -147,4 +151,4 @@ http.createServer((req, res) => {
             break;
     }
 
-}).listen(80, () => { console.log("web started port:80") })
+}).listen(() => { console.log("web started port:80") })
