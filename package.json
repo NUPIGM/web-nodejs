@@ -6,9 +6,6 @@
   "name": "app",
   "version": "1.0.0",
   "main": "web-server.js",
-  "exports": {
-    "import": "./content.js"
-  },
   "keywords": [],
   "author": "Rii",
   "license": "ISC",

@@ -9,55 +9,64 @@
 
 <body>
 	<a href="./index.html">主页</a>
-	<form id="myForm">
+	<form>
 		Username: <input type="text" id="user" name="user"><br>
 		Password: <input type="password" id="password" name="password">
-		<input type="submit" value="Submit">
+		<input type="reset" value="重置输入">
 	</form>
+	<button id="login" onclick="login()">登录</button>
+	<button id="register" onclick="register()">注册</button>
+	<button id="retrieve" onclick="retrieve()">找回密码</button>
+
+	<p>按钮后输出</p>
 	<div id="output"></div>
 
-	<div>
-		<input type="button" onclick="getFet()" id="get" value="get">
-	</div>
+
+
 
 </body>
 
 <script>
-	function getFet() {
-		fetch("/debug?a=1")
+	function login() {
+		fetch("/admin", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				"task": "login",
+				"user": "user",
+				"password": "password",
+				"verification": "verfication"
+			})
+		})
 			.then(res => res.text())
 			.then(data => {
 				console.log(data);
-				document.getElementById("output").textContent=data;
+				document.getElementById("output").textContent = data;
 			})
 			.catch(error => console.error('Error:', error));
 	}
-	document.getElementById('myForm').addEventListener('submit', (event) => {
-		event.preventDefault();
-		let user = document.getElementById("user").value
-		let password = document.getElementById("password").value
-		fetch("/login", {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
+	function register() {
+		fetch("/admin", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				user: user,
-				pwd: password
+				"task": "register",
+				"user": "user",
+				"password": "password",
+				"verification": "verfication"
 			})
-		}).then(res=>res.text()).then((response) => {
-			// handle the response
-			let outputElement = document.getElementById('output');
-			outputElement.textContent=response;
-			// if (outputElement) {
-			// 	outputElement.textContent = typeof response === 'object' ? JSON.stringify(response) : response;
-			// console.log(response);
+		})
+			.then(res => res.text())
+			.then(data => {
+				console.log(data);
+				document.getElementById("output").textContent = data;
+			})
+			.catch(error => console.error('Error:', error));
+	}
+	function retrieve() {
 
-			// } else {
-			// 	console.log("没有找到 id 为 'output' 的元素");
-			// }
-		}).catch(e => console.log('There was a problem with your fetch operation: ' + e.message));;
-	});
+	}
+
 </script>
 
 </html>

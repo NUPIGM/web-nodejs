@@ -3,9 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 
-import { parseCookie } from "./constroller.js";
-import { blog, movie } from "./content.js";
-import { error, log } from "node:console";
+import { parseCookie } from "./my_modules/constroller.js";
+import { login } from "./my_modules/admin.js";
+
+const PORT = 80;
 
 http.createServer((req, res) => {
     //url解析,返回一个对象(有路径、参数、地址等)。
@@ -27,7 +28,7 @@ http.createServer((req, res) => {
                 case "/":
                     res.statusCode = 301;
                     res.setHeader("Location", "/documents/index.html")
-                    res.setHeader("Content-Type","text/html")
+                    res.setHeader("Content-Type", "text/html")
                     res.end();
                     break;
                 case "/blog/content":
@@ -45,6 +46,14 @@ http.createServer((req, res) => {
                     break;
                 case "/movie/content":
                     res.end();
+                    break;
+                case "/login":
+                    if (reqUrl.searchParams.get("a")) {
+                        console.log("params:a");
+                    }
+                    res.end(
+
+                    )
                     break;
                 case "/db":
                     res.end();
@@ -84,9 +93,9 @@ http.createServer((req, res) => {
                     readStream.pipe(res)
 
                     readStream.on("end", () => {
-                        
-                    // res.setHeader("Content-Type","text/html")
-                        
+
+                        // res.setHeader("Content-Type","text/html")
+
                         console.log("have user visit file,path:", filePath);
                     })
 
@@ -94,61 +103,24 @@ http.createServer((req, res) => {
             }
             break;
         case "POST":
-
-            if (reqUrl.pathname === "/login") {
-
-                // req.pipe(res)
-
-                let day = new Date();
-                day.setTime(day.getTime() + 1000 * 60 * 60 * 24);
-                let dayMGTStr = day.toGMTString();
-
-
-
-                let postData = "";
-                req.on("data", chunk => {
-                    postData += chunk;
-                });
-                req.on("error", (err) => { console.log("login API request error:", err); })
-                req.on("end", () => {
-
-                    let jsonPostData = JSON.parse(postData)
-                    // console.log(jsonPostData["user"], jsonPostData["pwd"])
-                    // 验证用户的登录信息...
-                    // 如果验证成功，生成一个加密的 cookie
-                    const userId = jsonPostData["user"];  // 用户的 ID
-                    const secret = jsonPostData["pwd"];  // 你的密钥
-                    let token = crypto.createHmac('sha256', secret).update(userId).digest('hex');
-
-                    if (jsonPostData["user"] == "user" && jsonPostData["pwd"] == "pwd") {
-
-                        res.statusCode = 200;
-                        // res.setHeader("Location", "/")
-                        res.setHeader("Set-Cookie", [`token=${token};httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`, `userId=${userId};httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`]);
-                        res.end('"{"return":"1"}"')
-
-                    }
-                    /*
-                    else if (jsonPostData["logout"]=="logout") {
-                        res.setHeader("Set-Cookie", [`token="";httpOnly;secure;sameSite=Strict;path=/;expires=${dayMGTStr}`, `userId=${userId};httpOnly;secure;sameSite=Strict;path=/;expires=`]);
-                        
-                        res.end("logout")
-
-                    }
-                    */
-                    else {
-                        res.statusCode = 302;
-                        res.setHeader("Location", "/")
-                        res.setHeader("Content-Type", "application/json")
-                        res.end('"{"return":"0"}"');
-
-                    }
-                    console.log(`login request data => user = \<${jsonPostData["user"]}\> , password = \<${jsonPostData["pwd"]}\>`);
-                })
-
-
+            switch (reqUrl.pathname) {
+                case "/admin":
+                    let postData = "";
+                    req.on("data", chunk => {
+                        postData += chunk;
+                    });
+                    req.on("error", (err) => { console.log("login API request error:", err); })
+                    req.on("end", () => {
+                        res.end()
+                    })
+                    break;
+                default:
+                    res.statusCode = 405;
+                    // res.setHeader("Content-type", "application/json")
+                    res.end("Method Not Allowed");
+                    break;
             }
             break;
     }
 
-}).listen(() => { console.log("web started port:80") })
+}).listen(PORT, () => { console.log("web started port:", PORT) })
