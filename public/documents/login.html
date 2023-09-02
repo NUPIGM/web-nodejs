@@ -28,14 +28,16 @@
 
 <script>
 	function login() {
+		let userValue = document.getElementById("user").value;
+		let passwordValue = document.getElementById("password").value;
 		fetch("/admin", {
 			method: "POST",
-			headers: { "Content-Type": "application/json" },
+			// headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				"task": "login",
-				"user": "user",
-				"password": "password",
-				"verification": "verfication"
+				task: "login",
+				user: userValue,
+				password: passwordValue,
+				verification: "verfication"
 			})
 		})
 			.then(res => res.text())
@@ -46,13 +48,16 @@
 			.catch(error => console.error('Error:', error));
 	}
 	function register() {
+		
+		let userValue = document.getElementById("user").value;
+		let passwordValue = document.getElementById("password").value;
 		fetch("/admin", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				"task": "register",
-				"user": "user",
-				"password": "password",
+				"user": userValue,
+				"password": passwordValue,
 				"verification": "verfication"
 			})
 		})

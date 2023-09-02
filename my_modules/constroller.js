@@ -4,12 +4,16 @@ function parseCookie(string) {
     if (!string) {
         return obj;
     }
-    string.split(";").forEach(item => {
-        const arr = item.split("=");
-        const key = arr[0].trim();
-        const val = arr[1].trim();
-        obj[key] = val;
-    });
+    try {
+        string.split(";").forEach(item => {
+            const arr = item.split("=");
+            const key = arr[0].trim();
+            const val = arr[1].trim();
+            obj[key] = val;
+        });       
+    } catch (error) {
+        console.log(error);
+    }
     // let json = JSON.stringify(obj);
     // console.log(obj); // 输出 '{"a":"1","b":"2","c":"3"}'
     return obj;
