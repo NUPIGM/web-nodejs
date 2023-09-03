@@ -108,11 +108,12 @@ http.createServer((req, res) => {
               case "register":
                 let result2 = register(postData)
                 res.writeContinue()
+                console.log(result2);
                 res.writeHead(200, {
                   "Content-Type": "application/json",
                   "Set-Cookie": [`token=${result2.token};SameSite=Strict;expires=${result2.expiresMGT};Path=/;Secure;HttpOnly`]
                 })
-                delete result2.expiresMGT
+                // delete result2.expiresMGT
                 result2 = JSON.stringify(result2)
                 res.write(result2)
                 res.end()
