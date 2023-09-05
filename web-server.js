@@ -1,7 +1,6 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
-import crypto from "node:crypto";
 
 import { parseCookie } from "./my_modules/constroller.js";
 import { login, register } from "./my_modules/admin.js";
@@ -54,7 +53,12 @@ http.createServer((req, res) => {
           console.log("visiter address:", req.socket.remoteAddress)
           console.log("searchParams", reqUrl.searchParams)
           console.log()
-          res.end("debug,haha")
+          res.writeHead(200, {
+            // "Content-Type": "application/json",
+          })
+          let ab=({a:1})
+          res.write(JSON.stringify(ab))
+          res.end()
           break;
         default:
           // 使用 path 模块处理请求路径，确保只能访问 public 文件夹下的内容
@@ -108,11 +112,12 @@ http.createServer((req, res) => {
               case "register":
                 let result2 = register(postData)
                 res.writeContinue()
-                console.log(result2);
-                res.writeHead(200, {
-                  "Content-Type": "application/json",
-                  "Set-Cookie": [`token=${result2.token};SameSite=Strict;expires=${result2.expiresMGT};Path=/;Secure;HttpOnly`]
-                })
+                /*
+                                res.writeHead(200, {
+                                  "Content-Type": "application/json",
+                                  "Set-Cookie": [`token=${result2.token};SameSite=Strict;expires=${result2.expiresMGT};Path=/;Secure;HttpOnly`]
+                                })
+                 */
                 // delete result2.expiresMGT
                 result2 = JSON.stringify(result2)
                 res.write(result2)

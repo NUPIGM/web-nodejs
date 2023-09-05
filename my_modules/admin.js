@@ -54,30 +54,35 @@ async function register({ user = 1, password = 2 }) {
     // console.log(token);
     //查询数据库是否有该用户
     const collection = client.db("test").collection("test");
-    await collection.find({ user: "user" }).toArray().then(documents => {
-        console.log(documents[1].user);
-        if (!documents[1].user) {
-            //没有，注册操作
-            result = {
-                result: true,
-                user: user,
-                token: token,
-                expiresMGT: dayMGTStr,
-                msg: "register successfully"
-            }
-        } else {
-            //有，返回错误
-            result = {
-                result: false,
-                user: user,
-                token: token,
-                msg: "failed to register"
-            }
-        }
-        return result;
+    let a =await collection.find({ user: "user" }).toArray().then(documents => {
+        console.log(documents);
+        result=documents;
+        // resolve(documents)
+        // if (!documents[1].user) {
+        //     //没有，注册操作
+            
+        //     result = {
+        //         result: true,
+        //         user: user,
+        //         token: token,
+        //         expiresMGT: dayMGTStr,
+        //         msg: "register successfully"
+        //     }
+        // } else {
+        //     //有，返回错误
+        //     result = {
+        //         result: false,
+        //         user: user,
+        //         token: token,
+        //         msg: "failed to register"
+        //     }
+        // }
+
+        //return result;
 
     }).then(() => client.close()).catch(err => console.error(err));
-
+console.log("a:",result);
+return result;
 }
 
 // 二次认证TFA
