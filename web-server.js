@@ -1,9 +1,11 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 
-import { parseCookie } from "./my_modules/constroller.js";
+import { parseCookie, gzipOn, mimeTypes } from "./my_modules/constroller.js";
 import { login, register } from "./my_modules/admin.js";
+import { MinKey } from "mongodb";
 
 const PORT = process.env.PORT || 80;
 
@@ -12,7 +14,11 @@ http.createServer((req, res) => {
   const reqUrl = new URL(req.url, `http://${req.headers.host}`);
   //获取req的cookie
   const cookie = req.headers.cookie || "";
-  let getCookie = parseCookie(cookie);
+  const getCookie = parseCookie(cookie);
+  //
+  const acceptEncoding = req.headers["accept-encoding"];
+
+
   // 先判断请求的方法，决定处理过程
   // GET || POST
   switch (req.method) {
@@ -20,9 +26,11 @@ http.createServer((req, res) => {
       // 请求API，不同路径执行不同内容
       switch (reqUrl.pathname) {
         case "/":
-          res.statusCode = 301;
-          res.setHeader("Location", "/documents/index.html")
-          res.setHeader("Content-Type", "text/html")
+          res.writeHead(301, {
+            // "Content-Type":"text/html; charset=utf-8",
+            // "Content-Encodeing":"gzip",
+            "Location": "/documents/index.html",
+          })
           res.end();
           break;
         case "/article":
@@ -56,30 +64,45 @@ http.createServer((req, res) => {
           res.writeHead(200, {
             // "Content-Type": "application/json",
           })
-          let ab=({a:1})
+          let ab = ({ a: 1 })
           res.write(JSON.stringify(ab))
           res.end()
           break;
         default:
           // 使用 path 模块处理请求路径，确保只能访问 public 文件夹下的内容
           const filePath = path.join(process.cwd(), 'public', reqUrl.pathname);
+          //访问文件的MIME类型
+          const fileExt = path.extname(filePath);
+          const mime = mimeTypes[fileExt]
+
           const readStream = fs.createReadStream(filePath);
           readStream.on("data", (chunk) => { })
           readStream.on("error", (err) => {
-            console.log("read file strem error:", err);
+            // console.log("read file strem error:", err);
             res.statusCode = 405;
-            // res.setHeader("Content-type", "application/json")
-            res.end("Method Not Allowed");
+            if (gzipOn(acceptEncoding)) {
+              let b = Buffer.from("Method Not Allowed", "utf-8")
+              zlib.gzip(b, (err, result) => {
+                res.end(result)
+              })
+            } else {
+              res.end("Method Not Allowed");
+            }
+            // console.log(err);
           })
-          readStream.pipe(res)
-
+          if (mime) {
+            res.setHeader("Content-Type", mime + ";charset=utf-8")
+          }
+          if (gzipOn(acceptEncoding)) {
+            res.setHeader("Content-Encoding", "gzip");
+            readStream.pipe(zlib.createGzip()).pipe(res)
+          } else {
+            readStream.pipe(res)
+          }
           readStream.on("end", () => {
-
-            // res.setHeader("Content-Type","text/html")
-
-            console.log("have user visit file,path:", filePath);
+            // console.log("have user visit file,path:", filePath);
+            // res.end()
           })
-
           break;
       }
       break;

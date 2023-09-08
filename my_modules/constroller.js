@@ -1,4 +1,32 @@
 
+const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.txt': 'text/plain',
+    '.js': 'text/javascript',
+    '.ico': 'image/x-icon',
+    '.jpg': 'image/jpg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.mpeg': 'audio/mpeg',
+    '.vorbis': 'audio/vorbis',
+    '.mpeg':'video/mpeg',
+     '.mp4':'video/mp4',
+    '.json': 'application/json',
+    '.xml': 'application/xml',
+    '.pdf': 'application/pdf',
+    '.zip': 'application/zip',
+    // '':'application/octet-stream',
+    // 添加更多MIME类型...
+};
+
+
+function reqAndRes(request, response) {
+}
+
 function parseCookie(string) {
     let obj = {};
     if (!string) {
@@ -10,7 +38,7 @@ function parseCookie(string) {
             const key = arr[0].trim();
             const val = arr[1].trim();
             obj[key] = val;
-        });       
+        });
     } catch (error) {
         console.log(error);
     }
@@ -22,8 +50,17 @@ function returnData() {
 
 }
 function doPublicFiles() {
-    
+
+}
+function gzipOn(string) {
+    if (string) {
+        if (/\bgzip\b/.test(string)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 
-export { returnData, doPublicFiles,parseCookie }
+export { mimeTypes, reqAndRes, returnData, doPublicFiles, parseCookie, gzipOn }
