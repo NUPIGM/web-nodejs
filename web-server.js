@@ -1,168 +1,159 @@
-import http from "node:http";
+import http2 from "node:http2";
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 
 import { parseCookie, gzipOn, mimeTypes } from "./my_modules/constroller.js";
-import { login, register } from "./my_modules/admin.js";
-import { MinKey } from "mongodb";
+//import { login, register } from "./my_modules/admin.js";
 
-const PORT = process.env.PORT || 80;
+//端口
+const PORT = process.env.PORT || 443;
+//证书验证（测试证书）
+const options = {
+  key: fs.readFileSync("./ssl/key.pem"),
+  cert: fs.readFileSync("./ssl/cert.pem"),
+};
 
-http.createServer((req, res) => {
-  //url解析,返回一个对象(有路径、参数、地址等)。
-  const reqUrl = new URL(req.url, `http://${req.headers.host}`);
-  //获取req的cookie
-  const cookie = req.headers.cookie || "";
-  const getCookie = parseCookie(cookie);
-  //
-  const acceptEncoding = req.headers["accept-encoding"];
+function generateETagForFile(filePath) {
+  const stats = fs.statSync(filePath);
+  return stats.mtime.getTime().toString(); // 使用文件修改时间作为 ETag
+}
+http2
+  .createSecureServer(options, (req, res) => {
+    //url解析,返回一个对象(有路径、参数、地址等)。
+    const reqUrl = new URL(req.url, `http://${req.headers.host}`);
+    const cookies = req.headers.cookie || "";
+    const getCookies = parseCookie(cookies);
+    const ip = req.socket.remoteAddress;
+    const hv = req.httpVersion;
+    const acceptEncoding = req.headers["accept-encoding"];
 
+    // 先判断请求的方法，决定处理过程
+    // GET || POST
+    switch (req.method) {
+      case "GET": // 请求API，不同路径执行不同内容
+        switch (reqUrl.pathname) {
+          case "/":
+            res.writeHead(301, { Location: "/documents/main.html" });
+            res.end("301!");
+            break;
 
-  // 先判断请求的方法，决定处理过程
-  // GET || POST
-  switch (req.method) {
-    case "GET":
-      // 请求API，不同路径执行不同内容
-      switch (reqUrl.pathname) {
-        case "/":
-          res.writeHead(301, {
-            // "Content-Type":"text/html; charset=utf-8",
-            // "Content-Encodeing":"gzip",
-            "Location": "/documents/index.html",
-          })
-          res.end();
-          break;
-        case "/article":
-          res.end("ok")
-          break;
-        case "/movie":
-          res.end();
-          break;
-        case "/db":
-          res.end();
-          break;
-        case "/user":
-          res.end();
+          default:
+            // 使用 path 模块处理请求路径，确保只能访问 public 文件夹下的内容
+            const filePath = path.join(
+              process.cwd(),
+              "public",
+              reqUrl.pathname
+            );
+            //读取文件流
+            const readStream = fs.createReadStream(filePath);
 
-          break;
-        case "/hello":
-          // console.log('err');
-          // let a = JSON.stringify(getCookie);
-          // let b = JSON.stringify(reqUrl);
-          // res.setHeader("Content-Type","application/json")
-          res.end("hello");
-          break;
-        // 测试请求，主要返回变量的值
-        case "/debug":
-          console.log("req.url:", req.url)
-          console.log("reqUrl:", reqUrl)
-          console.log("getCookie:", getCookie)
-          console.log("visiter address:", req.socket.remoteAddress)
-          console.log("searchParams", reqUrl.searchParams)
-          console.log()
-          res.writeHead(200, {
-            // "Content-Type": "application/json",
-          })
-          let ab = ({ a: 1 })
-          res.write(JSON.stringify(ab))
-          res.end()
-          break;
-        default:
-          // 使用 path 模块处理请求路径，确保只能访问 public 文件夹下的内容
-          const filePath = path.join(process.cwd(), 'public', reqUrl.pathname);
-          //访问文件的MIME类型
-          const fileExt = path.extname(filePath);
-          const mime = mimeTypes[fileExt]
+            //访问文件的MIME类型
+            const fileExt = path.extname(filePath);
+            const mime = mimeTypes[fileExt];
+            const etag = generateETagForFile(filePath); // 生成唯一的 ETag 值
 
-          const readStream = fs.createReadStream(filePath);
-          readStream.on("data", (chunk) => { })
-          readStream.on("error", (err) => {
-            // console.log("read file strem error:", err);
-            res.statusCode = 405;
-            if (gzipOn(acceptEncoding)) {
-              let b = Buffer.from("Method Not Allowed", "utf-8")
-              zlib.gzip(b, (err, result) => {
-                res.end(result)
-              })
-            } else {
+            readStream.on("data", (chunk) => {}); //OK
+            readStream.on("error", (err) => {
+              const etag = generateETagForFile(); // 生成唯一的 ETag 值
+              const lastModified = getLastModifiedTimeForFile();
+              res.writeHead(405, {
+                "Content-Type": "text/html",
+                "Content-Encoding": "br", // 设置 Brotli 压缩});
+                ETag: etag,
+                "Cache-Control:public": "max-age=3600",
+                "Last-Modified": lastModified.toUTCString(),
+              });
+
               res.end("Method Not Allowed");
+              console.log(err);
+            });
+            if (mime) {
+              res.setHeader("Content-Type", mime + ";charset=utf-8");
             }
-            // console.log(err);
-          })
-          if (mime) {
-            res.setHeader("Content-Type", mime + ";charset=utf-8")
-          }
-          if (gzipOn(acceptEncoding)) {
-            res.setHeader("Content-Encoding", "gzip");
-            readStream.pipe(zlib.createGzip()).pipe(res)
-          } else {
-            readStream.pipe(res)
-          }
-          readStream.on("end", () => {
-            // console.log("have user visit file,path:", filePath);
-            // res.end()
-          })
-          break;
-      }
-      break;
-    case "POST":
-      switch (reqUrl.pathname) {
-        case "/admin":
-          // 请求的数据
-          let postData = "";
-          req.on("data", chunk => {
-            postData = postData.concat(chunk);
-            // postData += chunk;
-          });
-          req.on("error", (err) => { console.log("admin API request error:", err); })
-          req.on("end", () => {
-            postData = JSON.parse(postData)
-
-            switch (postData.task) {
-              case "login":
-                let result = login(postData)
-                res.writeContinue//向客户端发送100 Continue 响应，需要Expect: 100-continue头部
-                res.writeHead(200, {
-                  "Content-Type": "application/json",
-                  "Set-Cookie": [`token=${result.token};SameSite=Strict;expires=${result.expiresMGT};Path=/;Secure;HttpOnly`]
-                })
-                delete result.expiresMGT
-                result = JSON.stringify(result)
-                res.write(result)
-                res.end()
-                break;
-              case "register":
-                let result2 = register(postData)
-                res.writeContinue()
-                /*
-                                res.writeHead(200, {
-                                  "Content-Type": "application/json",
-                                  "Set-Cookie": [`token=${result2.token};SameSite=Strict;expires=${result2.expiresMGT};Path=/;Secure;HttpOnly`]
-                                })
-                 */
-                // delete result2.expiresMGT
-                result2 = JSON.stringify(result2)
-                res.write(result2)
-                res.end()
-
-                break;
-              case "delete":
-                res.end("暂未开发")
-
-              default:
-                res.end()
-                break;
+            const ifNoneMatch = req.headers["if-none-match"];
+            if (ifNoneMatch === etag) {
+              res.writeHead(304, {
+                ETag: etag,
+              });
+              res.end(); // 资源未改变，返回 304 Not Modified
+            } else if (acceptEncoding.includes("br")) {
+              res.writeHead(200, {
+                "Content-Encoding": "br", // 设置 Brotli 压缩});
+                ETag: etag,
+                "Cache-Control": "public,max-age=1",
+              });
+              readStream.pipe(zlib.createBrotliCompress()).pipe(res);
+            } else if (acceptEncoding.includes("gzip")) {
+              res.setHeader("Content-Encoding", "gzip");
+              readStream.pipe(zlib.createGzip()).pipe(res);
+            } else {
+              readStream.pipe(res);
             }
-          })
-          break;
-        default:
-          res.statusCode = 405;
-          // res.setHeader("Content-type", "application/json")
-          res.end("Method Not Allowed");
-          break;
-      }
-      break;
-  }
+            readStream.on("end", () => {});
+            break;
+        }
 
-}).listen(PORT, () => { console.log("web started port:", PORT) })
+        break;
+      /*
+        case "POST": // 请求API，不同路径执行不同内容
+        switch (reqUrl.pathname) {
+          case "/admin":
+            // 请求的数据
+            let postData = "";
+            req.on("data", (chunk) => {
+              postData = postData.concat(chunk);
+              // postData += chunk;
+            });
+            req.on("error", (err) => {
+              console.log("admin API request error:", err);
+            });
+            req.on("end", () => {
+              postData = JSON.parse(postData);
+
+              switch (postData.task) {
+                case "login":
+                  let result = login(postData);
+                  res.writeContinue; //向客户端发送100 Continue 响应，需要Expect: 100-continue头部
+                  res.writeHead(200, {
+                    "Content-Type": "application/json",
+                    "Set-Cookie": [
+                      `token=${result.token};SameSite=Strict;expires=${result.expiresMGT};Path=/;Secure;HttpOnly`,
+                    ],
+                  });
+                  delete result.expiresMGT;
+                  result = JSON.stringify(result);
+                  res.write(result);
+                  res.end();
+                  break;
+                case "register":
+                  let result2 = register(postData);
+                  res.writeContinue();
+                  // delete result2.expiresMGT
+                  result2 = JSON.stringify(result2);
+                  res.write(result2);
+                  res.end();
+
+                  break;
+                case "delete":
+                  res.end("暂未开发");
+
+                default:
+                  res.end();
+                  break;
+              }
+            });
+            break;
+          default:
+            res.statusCode = 405;
+            // res.setHeader("Content-type", "application/json")
+            res.end("Method Not Allowed");
+            break;
+        }
+        break;
+      */
+    }
+  })
+  .listen(PORT, () => {
+    console.log("web started 127.0.0.1:", PORT);
+  });
