@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "nodemon start.js"
+    "start": "node start.js"
   },
   "name": "webserver",
   "version": "1.0.0",
@@ -11,7 +11,7 @@
   "license": "ISC",
   "description": "https://www.youtube.com/watch?v=CsrfzkNgvyA&list=PL9nxfq1tlKKlhV1UzUmElRkxmjkoO3mtH&index=8\r #### 教程地址",
   "dependencies": {
-    "mongodb": "^6.0.0",
-    "nodemon": "^3.0.1"
+    "mongodb": "^6.3.0",
+    "nodemon": "^3.0.2"
   }
 }
