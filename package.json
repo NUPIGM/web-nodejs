@@ -1,11 +1,11 @@
 {
   "type": "module",
   "scripts": {
-    "start": "nodemon web-server.js"
+    "start": "nodemon start.js"
   },
-  "name": "app",
+  "name": "webserver",
   "version": "1.0.0",
-  "main": "web-server.js",
+  "main": "start.js",
   "keywords": [],
   "author": "Rii",
   "license": "ISC",
