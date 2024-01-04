@@ -1,18 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>video</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>video</title>
+  <link rel="stylesheet" href="../styles/video.css">
 </head>
 <body>
-    <a href="../videos/SampleVideo_1280x720_1mb.mp4">SampleVideo_1280x720_1mb</a>
-    <a href="../videos/SampleVideo_1280x720_20mb.mp4">SampleVideo_1280x720_2mb</a>
-    <a href="../videos/SampleVideo_1280x720_30mb.mp4">SampleVideo_1280x720_30mb</a>
-<video width="320" height="240" controls>
-  <source src="../videos/SampleVideo_1280x720_2mb.mp4" type="video/mp4">
-  <source src="movie.ogg" type="video/ogg">
-  Your browser does not support the video tag.
-</video>
+  <video id="video-container" controls data-current-time="90" preload="auto"
+    poster="">
+    <source src="https://vip.lz-cdn14.com/20220627/3731_915090fd/index.m3u8" type="application/x-mpegURL">
+    <source src="https://dow.dowlz6.com/20220627/3727_11b83b0a/西部世界.S04E01.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <button id="" onclick="">选集</button>
+  <button id="" onclick="">详情</button>
+  <dl class="multi-column-list">
+    <dt>1</dt>
+    <dt>2</dt>
+    <dt>3</dt>
+    <dt>4</dt>
+    <dt>5</dt>
+    
+    <dt>6</dt>
+    <dt>7</dt>
+    <dt>8</dt>
+    <dt>9</dt>
+    <dt>10</dt>
+    <dt>11</dt>
+    </dl>
+    <div class="control">
+    <button id="" onclick="passHearder()">跳过片头</button>
+    <button id="" onclick="setCurrentTime()">设置片头</button>
+    <button id="" onclick="">上一集</button>
+    <button id="" onclick="">下一集</button>
+    <button id="" onclick="">选集</button>
+  </div>
+  <script>
+    let videoContainer = document.getElementById('video-container');
+   
+    function passHearder() {
+    let currentTime = videoContainer.getAttribute('data-current-time');
+      if (videoContainer.currentTime <currentTime) {
+        
+      videoContainer.currentTime = currentTime;// 跳转到指定时间
+      }
+    };
+
+    function setCurrentTime(){
+      videoContainer.setAttribute('data-current-time', "200")
+    }
+
+
+
+    // 当当前视频播放完毕时
+    video.addEventListener("ended", function () {
+      // 获取下一集的视频源
+      var nextVideoSource = document.getElementById("videoSource");
+
+      // 如果有下一集
+      if (nextVideoSource) {
+        // 清空当前视频播放器中的内容
+        video.src = "";
+        // 添加下一集的视频源
+        video.appendChild(nextVideoSource);
+        // 播放下一集
+        video.play();
+      }
+    });
+
+    function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+        }
+    }
+    console.log('Query variable ' + variable + ' is not found');
+}
+
+var city = getQueryVariable('wd');
+console.log(city);
+  </script>
 </body>
+
 </html>

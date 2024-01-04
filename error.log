@@ -1,6 +1,0 @@
-2023-12-24 11:51:36 [Delicious-Mac.local] Error Error: 测试错误
-    at file:///Users/nupigm/Documents/GitHub/web-nodejs/my_modules/log.js:33:9
-    at ModuleJob.run (node:internal/modules/esm/module_job:218:25)
-    at async ModuleLoader.import (node:internal/modules/esm/loader:329:24)
-    at async loadESM (node:internal/process/esm_loader:28:7)
-    at async handleMainPromise (node:internal/modules/run_main:113:12) undefined

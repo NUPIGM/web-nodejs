@@ -1,0 +1,29 @@
+{
+    // 使用 IntelliSense to learn about possible attributes.
+    // 指定使用的 Node.js 运行时版本
+
+    "version": "0.2.0",
+    // 指定启动配置项名称
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program using Nodemon",
+            "runtimeExecutable": "node",
+            "args": [
+                "${workspaceFolder}/node_modules/nodemon/bin/nodemon.js"
+            ],
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Docker Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node"
+        }
+    ]
+}

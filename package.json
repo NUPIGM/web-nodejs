@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node start.js"
+    "start": "nodemon start"
   },
   "name": "webserver",
   "version": "1.0.0",
@@ -9,9 +9,15 @@
   "keywords": [],
   "author": "Rii",
   "license": "ISC",
-  "description": "https://www.youtube.com/watch?v=CsrfzkNgvyA&list=PL9nxfq1tlKKlhV1UzUmElRkxmjkoO3mtH&index=8\r #### 教程地址",
+  "description": "A web server project.",
   "dependencies": {
-    "mongodb": "^6.3.0",
     "nodemon": "^3.0.2"
-  }
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "bin": {
+    "nodemon": "./node_modules/nodemon/bin/nodemon.js"
+  },
+  "preferGlobal": false
 }

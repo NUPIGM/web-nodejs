@@ -1,0 +1,45 @@
+/* 假设你有一个定制的变量文件 custom-variables.css 用于定义颜色 */
+:root {
+  --video-border-color: rgb(255, 255, 255);
+  --background-color: rgb(255, 255, 255);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: var(--background-color);
+}
+
+/* 用于小于等于移动设备的样式 */
+@media (max-width: 768px) {
+  #video-container {
+    width: 100vw;
+    margin: auto;
+  }
+}
+
+/* 用于平板设备的样式 */
+/* @media (min-width: 768px) and (max-width: 1024px) {
+
+} */
+
+/* 用于桌面设备的样式 */
+@media (min-width: 768px) {
+  #video-container {
+    float: left;
+    width: 60vw;
+    margin-top: 2ex;
+    margin-left: 2ex;
+  }
+  /* 样式化多列列表 */
+  .multi-column-list {
+    list-style: none; /* 移除默认的列表样式 */
+    
+    text-align: center; /* 居中文本 */
+    line-height: 3; /* 设置行高 */
+
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 定义*列 */
+  }
+}

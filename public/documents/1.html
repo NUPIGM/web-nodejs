@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>横向多列列表</title>
+  <style>
+    /* 样式化横向多列列表 */
+    .multi-column-list {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0;
+      list-style: none; /* 移除默认的列表样式 */
+    }
+    /* 设置每列的宽度 */
+    .multi-column-list li {
+      width: 45%; /* 每列的宽度 */
+      margin: 5px; /* 列之间的间距 */
+      text-align: center; /* 居中文本 */
+      border: 1px solid #ccc; /* 边框样式 */
+      padding: 10px; /* 内边距 */
+    }
+  </style>
+</head>
+<body>
+  <ul class="multi-column-list">
+    <li>项目 1</li>
+    <li>项目 2</li>
+    <li>项目 3</li>
+    <li>项目 4</li>
+    <li>项目 5</li>
+    <li>项目 6</li>
+    <li>项目 7</li>
+    <li>项目 8</li>
+    <li>项目 9</li>
+    <li>项目 10</li>
+  </ul>
+</body>
+</html>
