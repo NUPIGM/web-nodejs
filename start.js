@@ -1,5 +1,4 @@
 import { createSecureServer } from "node:http2";
-import { createServer } from "node:http";
 import { readFileSync } from "node:fs";
 import os from "node:os";
 
@@ -45,12 +44,3 @@ createSecureServer(options, (req, res) => {
   console.log("web started for https://localhost", 443);
 });
 options = null;
-
-/**
-// 创建HTTP服务器
-createServer((req, res) => {
-  server(req, res);
-}).listen(80, () => {
-  console.log("web started for http://localhost", 80);
-});
-*/
