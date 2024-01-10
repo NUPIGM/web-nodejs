@@ -1,11 +1,8 @@
 import { createReadStream } from "node:fs";
 import { extname, join } from "node:path";
-import zlib from "node:zlib";
 
 import { gzipOn, contentType, parseCookies } from "./my_modules/mudules.js";
 import { logError } from "./my_modules/log.js";
-import { Agent } from "node:http";
-//import { login, register } from "./my_modules/admin.js";
 
 export function server(req, res) {
   const {

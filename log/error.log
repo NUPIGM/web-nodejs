@@ -1,0 +1,3 @@
+<2024-01-10 15:16:07> [::1]
+  stack = Error: EISDIR: illegal operation on a directory, read
+  data = undefined
